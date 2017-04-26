@@ -30,7 +30,16 @@
 <%= javascript_tag do %>
   var stream;
   var video;
-  navigator.mediaDevices.getUserMedia({video: true, audio: false}).then(function (stream) {
+  var constraints = {
+    video: {
+      mandatory: {
+        maxWidth: 320,
+        maxHeight: 240
+      }
+    },
+    audio: false
+  };
+  navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     stream = stream;
     video = document.getElementById('video');
     video.src = window.URL.createObjectURL(stream);
