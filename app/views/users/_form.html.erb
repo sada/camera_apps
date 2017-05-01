@@ -55,8 +55,15 @@
       canvas.toBlob(function(blob) {
         var img = document.getElementById('image');
         img.src = window.URL.createObjectURL(blob);
+
+        var request = new XMLHttpRequest();
+        request.open('POST', '/avatars');
+        request.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
+        var formData = new FormData();
+        formData.append('avatar[image]', blob, '<%= Time.now.strftime("%Y%m%d%H%M") %>}.jpeg');
+        request.send(formData);
       }, 'image/jpeg', 0.95);
-      video.pause();
+      stream.getTracks()[0].stop();
     }, 3000);
   }).catch(function (error) {
     console.error('mediaDevice.getUserMedia() error:', error);

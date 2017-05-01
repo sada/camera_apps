@@ -6,10 +6,8 @@ class AvatarsController < ApplicationController
 
     respond_to do |format|
       if @avatar.save
-        format.html { redirect_to @avatar, notice: 'Avatar was successfully created.' }
-        format.json { render :show, status: :created, location: @avatar }
+        format.json { render json: @avatar }
       else
-        format.html { render :new }
         format.json { render json: @avatar.errors, status: :unprocessable_entity }
       end
     end
