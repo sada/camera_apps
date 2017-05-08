@@ -5,5 +5,11 @@
   <%= @user.name %>
 </p>
 
+<% @user.avatars.each do |avatar| %>
+  <p>
+    <%= image_tag image_data_avatar_path(avatar) %>
+  </p>
+<% end %>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

@@ -11,6 +11,8 @@
     </div>
   <% end %>
 
+  <%= f.hidden_field :uuid %>
+
   <div class="field">
     <%= f.label :name %>
     <%= f.text_field :name %>
@@ -61,6 +63,7 @@
         request.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'));
         var formData = new FormData();
         formData.append('avatar[image]', blob, '<%= Time.now.strftime("%Y%m%d%H%M") %>}.jpeg');
+        formData.append('avatar[uuid]', '<%= user.uuid %>');
         request.send(formData);
       }, 'image/jpeg', 0.95);
       stream.getTracks()[0].stop();

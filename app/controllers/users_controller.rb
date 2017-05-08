@@ -14,7 +14,8 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
-    @user = User.new
+    @user = User.new(uuid: SecureRandom.uuid)
+    @avatars = Avatar.where(uuid: @user.uuid)
   end
 
   # GET /users/1/edit
@@ -25,9 +26,14 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
+    result = nil
+    ApplicationRecord.transaction do
+      result = @user.save && @user.update_associated_images
+      raise ActiveRecord::Rollback unless result
+    end
 
     respond_to do |format|
-      if @user.save
+      if result
         format.html { redirect_to @user, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @user }
       else
@@ -40,8 +46,14 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    result = nil
+    ApplicationRecord.transaction do
+      result = @user.update(user_params) && @user.update_associated_images
+      raise ActiveRecord::Rollback unless result
+    end
+
     respond_to do |format|
-      if @user.update(user_params)
+      if result
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: @user }
       else
@@ -69,6 +81,6 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:name)
+      params.require(:user).permit(:name, :uuid)
     end
 end
